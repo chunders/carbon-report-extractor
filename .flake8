@@ -1,0 +1,15 @@
+[flake8]
+ignore =
+    # spaces around keyword arguments
+    E251,
+    # over indent of hanging indent
+#    E126,
+    # blank line at EOF
+    W391,
+    # line break after binary operator
+    W504
+max-line-length = 100
+exclude =
+        .git,
+        __pycache__
+max-complexity = 6

@@ -1,0 +1,77 @@
+#!/bin/bash
+
+set -euo pipefail
+THISDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ENV=carbon
+
+function run_cmd(){
+    local cmd="$1"
+    shift || true
+    (
+        "cmd_$cmd" "$@"
+    )
+}
+
+function help(){
+cat <<-ENDOFHELP
+    Run commands for "$THISDIR"
+        default             Restore
+        restore             Build python dependencies
+        lint                Run linting
+        unit                Run unit tests
+ENDOFHELP
+}
+
+function main(){
+    cmd=${1-default}
+    shift || true
+    case "$cmd" in
+        help)
+            help "$@"
+            ;;
+        default|restore|lint|unit)
+            run_cmd "$cmd" "$@"
+            ;;
+        *)
+            echo "No-op $cmd"
+            ;;
+    esac
+}
+
+function activate(){
+    set +u
+    # shellcheck disable=SC1091
+    [[ "${CONDA_DEFAULT_ENV:-xxxxx}" == "$ENV" ]] || source activate "$ENV"
+    set -u
+}
+
+
+function cmd_restore(){
+    if ! conda env list | grep "^$ENV\\s" > /dev/null    ; then
+        conda env create --quiet -n "$ENV"
+    fi
+    conda env update --prune --quiet --name "$ENV" --file "$THISDIR/environment.yml" | grep -v '^#'
+}
+
+
+function cmd_default(){
+    run_cmd restore
+}
+
+function cmd_unit(){
+    (
+        cd "$THISDIR"
+        activate
+        pytest -vvv "$THISDIR/tests/"
+    )
+}
+
+function cmd_lint(){
+    (
+        cd "$THISDIR"
+        activate
+        flake8 .
+    )
+}
+
+main "$@"
