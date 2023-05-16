@@ -9,6 +9,7 @@ dependencies:
   - spyder=5.2.2
   - pandas=1.4.3
   - pypdf2=2.9.0
+  - pyqtwebengine=5.15.7
   - pip=22.1.2
   - pip:
     - pdfreader==0.1.12

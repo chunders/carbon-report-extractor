@@ -4,7 +4,7 @@ from src.pdf_report_extract import extract_text_from_pdf, get_data_from_pdf_text
 
 
 if __name__ == '__main__':
-    # main()
+    file_path = 'data/two-page-pdf-report.pdf'
     file_path = 'data/test-report.pdf'
     output_csv_path = 'data/test-output.csv'
     pdf_text = extract_text_from_pdf(file_path)
